@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  app:
+    build: .
+    restart: always
+    command: npm run dev
+    ports:
+      - ${NODE_PORT}:${NODE_PORT}
+    volumes:
+      - .:/usr/app
+    external_links:
+      - db
+    depends_on:
+      - db
+    stdin_open: true
+    tty: true
+  db:
+    container_name: ${DB_CONTAINER_HOST}
+    image: 'postgres:latest'
+    restart: always
+    environment:
+      - POSTGRES_USER=${DB_CONTAINER_USER}
+      - POSTGRES_PASSWORD=${DB_CONTAINER_ROOT_PASSWORD}
+      - POSTGRES_DB=${DB_CONTAINER_NAME}
+    ports:
+      - '${DB_LOCAL_PORT}:${DB_CONTAINER_PORT}'
+    volumes:
+      - db:/var/lib/postgresql/data
+volumes:
+  db:
